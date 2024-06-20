@@ -7,12 +7,12 @@ const { Content } = Layout;
 
 const LayoutUtama = ({ children }) => {
   return (
-    <Layout style={{ margin: "auto", minHeight: "100vh" }}>
+    <Layout style={{ minHeight: "100%" }}>
       <HeaderComponent />
       <Layout>
         <Sidebar />
         <Layout>
-          <Content style={{ margin: "16px" }}>
+          <Content style={{ margin: "16px", padding: "20" }}>
             <div style={{ padding: 24, background: "#fff", minHeight: 360 }}>
               {children}
             </div>

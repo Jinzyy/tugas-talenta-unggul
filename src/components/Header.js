@@ -1,6 +1,6 @@
 import React from "react";
 import { Layout, Button } from "antd";
-import { LogoutOutlined } from "@ant-design/icons";
+import { LogoutOutlined, DingdingOutlined } from "@ant-design/icons";
 
 const { Header } = Layout;
 
@@ -12,8 +12,13 @@ const HeaderComponent = () => {
   return (
     <Header className="header" style={headerStyle}>
       <div className="logo" style={logoStyle}>
-        <span style={{ color: "white", fontSize: "20px", fontWeight: "bold" }}>
-          CV Bawang Berkat
+        <span>
+          <DingdingOutlined />
+        </span>
+        <span
+          style={{ color: "#001529", fontSize: "20px", fontWeight: "bold" }}
+        >
+          Toko Bawang CV Berkat
         </span>
       </div>
       <div style={logoutContainerStyle}>
@@ -36,17 +41,20 @@ const headerStyle = {
   justifyContent: "space-between",
   alignItems: "center",
   padding: "0 20px",
-  backgroundColor: "#001529", // Adjust background color as needed
+  backgroundColor: "#ffffff", // Change background color to white
+  borderBottom: "1px solid #001529", // Add bottom border
+  boxSizing: "border-box",
+  height: "64px", // Standard height for Ant Design header
 };
 
 const logoStyle = {
-  color: "white",
+  color: "#001529", // Change text color to match the original background color
   fontSize: "20px",
   fontWeight: "bold",
 };
 
 const logoutContainerStyle = {
-  display: "auto",
+  display: "flex",
   alignItems: "center",
 };
 

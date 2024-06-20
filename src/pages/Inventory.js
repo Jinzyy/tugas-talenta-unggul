@@ -9,6 +9,7 @@ const Inventory = () => {
   const [inventory, setInventory] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
+  const [form] = Form.useForm();
 
   useEffect(() => {
     fetchInventory();
@@ -30,6 +31,7 @@ const Inventory = () => {
       .post("http://localhost:5000/api/inventory", values)
       .then(() => {
         fetchInventory();
+        form.resetFields();
         message.success("Item added successfully");
       })
       .catch(() => {
@@ -109,7 +111,7 @@ const Inventory = () => {
       <Content style={{ margin: "16px" }}>
         <div>
           <h2>Daftar Barang</h2>
-          <Form onFinish={addInventory}>
+          <Form form={form} onFinish={addInventory}>
             <Form.Item
               name="nama_barang"
               rules={[{ required: true, message: "Please input the name!" }]}

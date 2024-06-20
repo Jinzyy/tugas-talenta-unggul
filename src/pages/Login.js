@@ -1,7 +1,9 @@
 import React, { useState } from "react";
-import { Form, Input, Button, Alert } from "antd";
+import { Form, Input, Button, Alert, Typography } from "antd";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+
+const { Title } = Typography;
 
 const Login = () => {
   const [error, setError] = useState(null);
@@ -25,6 +27,9 @@ const Login = () => {
   return (
     <div style={containerStyle}>
       <div style={formStyle}>
+        <Title level={2} style={{ textAlign: "center", marginBottom: "20px" }}>
+          Dashboard CV Berkat
+        </Title>
         {error && (
           <Alert
             message={error}
@@ -67,13 +72,15 @@ const containerStyle = {
   justifyContent: "center",
   alignItems: "center",
   minHeight: "100vh",
+  backgroundColor: "#f0f2f5",
 };
 
 const formStyle = {
   backgroundColor: "#ffffff",
-  padding: "20px",
+  padding: "40px 20px",
   borderRadius: "8px",
   boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+  textAlign: "center",
 };
 
 export default Login;

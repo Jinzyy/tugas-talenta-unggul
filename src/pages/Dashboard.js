@@ -12,8 +12,6 @@ const Dashboard = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // const username = localStorage.getItem("username");
-
     axios
       .get("http://localhost:5000/home") // Sesuaikan dengan URL backend Anda
       .then((response) => {
@@ -53,13 +51,13 @@ const Dashboard = () => {
     <LayoutUtama>
       <Content style={{ margin: "16px" }}>
         <div className="site-layout-background" style={{ minHeight: 360 }}>
-          <h2>Inventory</h2>
+          <h2>Daftar Barang</h2>
           <Table
             columns={inventoryColumns}
             dataSource={inventory}
             rowKey="_id"
           />
-          <h2>Employees</h2>
+          <h2>Daftar Pegawai</h2>
           <Table
             columns={employeeColumns}
             dataSource={employees}

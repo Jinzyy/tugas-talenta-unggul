@@ -11,6 +11,7 @@ const Employee = () => {
   const [employees, setEmployees] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingEmployee, setEditingEmployee] = useState(null);
+  const [form] = Form.useForm();
 
   useEffect(() => {
     fetchEmployees();
@@ -32,6 +33,7 @@ const Employee = () => {
       .post("http://localhost:5000/api/pegawai", values)
       .then(() => {
         fetchEmployees();
+        form.resetFields();
         message.success("Employee added successfully");
       })
       .catch(() => {
@@ -121,7 +123,7 @@ const Employee = () => {
       <Content style={{ margin: "16px" }}>
         <div>
           <h2>Daftar Pegawai</h2>
-          <Form onFinish={addEmployee}>
+          <Form form={form} onFinish={addEmployee}>
             <Form.Item
               name="username"
               rules={[
