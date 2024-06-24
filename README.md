@@ -6,15 +6,15 @@
 
 <h2>Project Screenshots:</h2>
 
-<img src="https://res.cloudinary.com/dwkvqfqtd/image/upload/v1719220906/tugas-talenta-unggul/hzuyyileatkavkrvqcs0.png" alt="project-screenshot" width="400" height="400/">
+<img src="https://res.cloudinary.com/dwkvqfqtd/image/upload/v1719220906/tugas-talenta-unggul/hzuyyileatkavkrvqcs0.png" alt="project-screenshot" width="200" height="400/">
 
-<img src="https://res.cloudinary.com/dwkvqfqtd/image/upload/v1719220906/tugas-talenta-unggul/mpmxzjjqgom4c1unrspw.png" alt="project-screenshot" width="400" height="400/">
+<img src="https://res.cloudinary.com/dwkvqfqtd/image/upload/v1719220906/tugas-talenta-unggul/mpmxzjjqgom4c1unrspw.png" alt="project-screenshot" width="200" height="400/">
 
-<img src="https://res.cloudinary.com/dwkvqfqtd/image/upload/v1719220906/tugas-talenta-unggul/tdpuakj9urxz8psgxh4m.png" alt="project-screenshot" width="400" height="400/">
+<img src="https://res.cloudinary.com/dwkvqfqtd/image/upload/v1719220906/tugas-talenta-unggul/tdpuakj9urxz8psgxh4m.png" alt="project-screenshot" width="200" height="400/">
 
-<img src="https://res.cloudinary.com/dwkvqfqtd/image/upload/v1719220906/tugas-talenta-unggul/ybyi0aoayfmdaimnjmd9.png" alt="project-screenshot" width="400" height="400/">
+<img src="https://res.cloudinary.com/dwkvqfqtd/image/upload/v1719220906/tugas-talenta-unggul/ybyi0aoayfmdaimnjmd9.png" alt="project-screenshot" width="200" height="400/">
 
-<img src="https://res.cloudinary.com/dwkvqfqtd/image/upload/v1719220906/tugas-talenta-unggul/meado5mdpsqv1hbraphf.png" alt="project-screenshot" width="400" height="400/">
+<img src="https://res.cloudinary.com/dwkvqfqtd/image/upload/v1719220906/tugas-talenta-unggul/meado5mdpsqv1hbraphf.png" alt="project-screenshot" width="200" height="400/">
 
   
   
