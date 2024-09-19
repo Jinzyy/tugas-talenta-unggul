@@ -3,13 +3,15 @@ import { Table, Button, Form, Input, Modal, message } from "antd";
 import axios from "axios";
 import LayoutUtama from "../components/Layoututama";
 import { Content } from "antd/es/layout/layout";
-import { EditFilled, DeleteFilled } from "@ant-design/icons";
+import { EditFilled, DeleteFilled, SearchOutlined } from "@ant-design/icons";
 
 const Inventory = () => {
   const [inventory, setInventory] = useState([]);
+  const [filteredInventory, setFilteredInventory] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
   const [form] = Form.useForm();
+  const [searchText, setSearchText] = useState("");
 
   useEffect(() => {
     fetchInventory();
@@ -20,6 +22,7 @@ const Inventory = () => {
       .get("http://localhost:5000/api/inventory")
       .then((response) => {
         setInventory(response.data.inventory_summary);
+        setFilteredInventory(response.data.inventory_summary);
       })
       .catch((error) => {
         console.error("Error fetching inventory:", error);
@@ -32,10 +35,10 @@ const Inventory = () => {
       .then(() => {
         fetchInventory();
         form.resetFields();
-        message.success("Item added successfully");
+        message.success("Berhasil menambah item");
       })
       .catch(() => {
-        message.error("Failed to add item");
+        message.error("Gagal menambah item");
       });
   };
 
@@ -45,10 +48,10 @@ const Inventory = () => {
       .then(() => {
         fetchInventory();
         setIsModalVisible(false);
-        message.success("Item updated successfully");
+        message.success("Item berhasil di update");
       })
       .catch(() => {
-        message.error("Failed to update item");
+        message.error("Item gagal di update");
       });
   };
 
@@ -57,10 +60,10 @@ const Inventory = () => {
       .delete(`http://localhost:5000/api/inventory/${id}`)
       .then(() => {
         fetchInventory();
-        message.success("Item deleted successfully");
+        message.success("Item berhasil dihapus");
       })
       .catch(() => {
-        message.error("Failed to delete item");
+        message.error("Item gagal dihapus");
       });
   };
 
@@ -78,6 +81,14 @@ const Inventory = () => {
   const handleModalCancel = () => {
     setIsModalVisible(false);
     setEditingItem(null);
+  };
+
+  const handleSearch = (value) => {
+    setSearchText(value);
+    const filteredData = inventory.filter((item) =>
+      item.nama_barang.toLowerCase().includes(value.toLowerCase())
+    );
+    setFilteredInventory(filteredData);
   };
 
   const inventoryColumns = [
@@ -142,11 +153,23 @@ const Inventory = () => {
               </Button>
             </Form.Item>
           </Form>
+
+          {/* Search Input */}
+          <Input
+            placeholder="Search Nama Barang"
+            style={{ width: 200, marginBottom: "16px", float: "right" }}
+            onChange={(e) => handleSearch(e.target.value)}
+            value={searchText}
+            prefix={<SearchOutlined />}
+          />
+
           <Table
             columns={inventoryColumns}
-            dataSource={inventory}
+            dataSource={filteredInventory}
             rowKey="_id"
+            pagination={{ pageSize: 5 }}
           />
+
           <Modal
             title="Edit Item"
             visible={isModalVisible}

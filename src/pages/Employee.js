@@ -3,7 +3,7 @@ import { Table, Button, Form, Input, Modal, Select, message } from "antd";
 import axios from "axios";
 import LayoutUtama from "../components/Layoututama";
 import { Content } from "antd/es/layout/layout";
-import { EditFilled, DeleteFilled } from "@ant-design/icons";
+import { EditFilled, DeleteFilled, SearchOutlined } from "@ant-design/icons";
 
 const { Option } = Select;
 
@@ -11,17 +11,25 @@ const Employee = () => {
   const [employees, setEmployees] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingEmployee, setEditingEmployee] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 5,
+  });
   const [form] = Form.useForm();
 
   useEffect(() => {
     fetchEmployees();
-  }, []);
+  }, [searchTerm, pagination.current]);
 
   const fetchEmployees = () => {
     axios
       .get("http://localhost:5000/api/pegawai")
       .then((response) => {
-        setEmployees(response.data.pegawai);
+        const filteredData = response.data.pegawai.filter((employee) =>
+          employee.username.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+        setEmployees(filteredData);
       })
       .catch(() => {
         message.error("Failed to fetch employees");
@@ -80,6 +88,14 @@ const Employee = () => {
   const handleModalCancel = () => {
     setIsModalVisible(false);
     setEditingEmployee(null);
+  };
+
+  const handleSearch = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const handleTableChange = (pagination) => {
+    setPagination(pagination);
   };
 
   const employeeColumns = [
@@ -186,11 +202,34 @@ const Employee = () => {
               </Button>
             </Form.Item>
           </Form>
+
+          {/* Input untuk pencarian pegawai secara real-time */}
+          <div style={{ marginBottom: 16, textAlign: "right" }}>
+            <Input
+              placeholder="Cari Pegawai"
+              value={searchTerm}
+              onChange={handleSearch}
+              style={{ width: 300 }}
+              prefix={<SearchOutlined />}
+            />
+          </div>
+
+          {/* Table with pagination */}
           <Table
             columns={employeeColumns}
             dataSource={employees}
             rowKey="_id"
+            pagination={{
+              current: pagination.current,
+              pageSize: pagination.pageSize,
+              total: employees.length,
+              onChange: (page) =>
+                setPagination({ ...pagination, current: page }),
+            }}
+            onChange={handleTableChange}
           />
+
+          {/* Modal for editing employee */}
           <Modal
             title="Edit Employee"
             visible={isModalVisible}
@@ -207,7 +246,7 @@ const Employee = () => {
                 <Input placeholder="Username" />
               </Form.Item>
               <Form.Item
-                name="tempat_lahir"
+                name="tempatLahir"
                 rules={[
                   {
                     required: true,
@@ -218,7 +257,7 @@ const Employee = () => {
                 <Input placeholder="Tempat Lahir" />
               </Form.Item>
               <Form.Item
-                name="tanggal_lahir"
+                name="tanggalLahir"
                 rules={[
                   {
                     required: true,
@@ -229,7 +268,7 @@ const Employee = () => {
                 <Input type="date" />
               </Form.Item>
               <Form.Item
-                name="jenis_kelamin"
+                name="jenisKelamin"
                 rules={[
                   { required: true, message: "Please select the gender!" },
                 ]}

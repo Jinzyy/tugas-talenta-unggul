@@ -56,12 +56,14 @@ const Dashboard = () => {
             columns={inventoryColumns}
             dataSource={inventory}
             rowKey="_id"
+            pagination={{ pageSize: 5 }} // Set pagination untuk menampilkan 5 item per halaman
           />
           <h2>Daftar Pegawai</h2>
           <Table
             columns={employeeColumns}
             dataSource={employees}
             rowKey="_id"
+            pagination={{ pageSize: 5 }} // Set pagination untuk menampilkan 5 item per halaman
           />
         </div>
       </Content>
