@@ -20,7 +20,7 @@ const Login = () => {
         }
       })
       .catch(() => {
-        setError("Login failed. Please try again.");
+        setError("Gagal login. Silahkan coba lagi!");
       });
   };
 
@@ -45,13 +45,13 @@ const Login = () => {
         >
           <Form.Item
             name="username"
-            rules={[{ required: true, message: "Please input your username!" }]}
+            rules={[{ required: true, message: "Masukkan username anda!" }]}
           >
             <Input placeholder="Username" />
           </Form.Item>
           <Form.Item
             name="password"
-            rules={[{ required: true, message: "Please input your password!" }]}
+            rules={[{ required: true, message: "Masukkan password anda!" }]}
           >
             <Input.Password placeholder="Password" />
           </Form.Item>
