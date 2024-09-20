@@ -39,7 +39,7 @@ def login():
                 return jsonify({'success': True, 'message': 'Login berhasil'})
             else:
                 return jsonify({'success': False, 'message': 'Hanya admin yang bisa masuk!'})
-        return jsonify({'success': False, 'message': 'Username atau Password tidak sesuai!'})
+        return jsonify({'success': False, 'message': 'Username atau Password tidak'})
 
 @app.route('/home', methods=['GET'])
 def homedashboard():
@@ -58,36 +58,6 @@ def homedashboard():
         'inventory_summary': inventory_summary,
         'employee_summary': employee_summary
     })
-
-@app.route('/api/revenue', methods=['GET'])
-def get_revenue():
-    # Ambil parameter start_date dan end_date dari query string
-    start_date_str = request.args.get('start_date')
-    end_date_str = request.args.get('end_date')
-
-    # Konversi string ke datetime jika parameter disediakan
-    if start_date_str and end_date_str:
-        start_date = datetime.strptime(start_date_str, '%Y-%m-%d')
-        end_date = datetime.strptime(end_date_str, '%Y-%m-%d')
-        query = {'tanggal_transaksi': {'$gte': start_date, '$lte': end_date}}
-    else:
-        # Jika tidak ada rentang tanggal, ambil semua data transaksi
-        query = {}
-
-    transactions = list(transaksi.find(query))
-
-    # Mengelompokkan transaksi berdasarkan bulan dan menghitung total pendapatan
-    revenue_by_month = {}
-    for trans in transactions:
-        tanggal_transaksi = trans['tanggal_transaksi']
-        bulan_tahun = tanggal_transaksi.strftime('%Y-%m')  # Contoh format: "2024-09"
-        total_harga = trans['total_harga']
-
-        if bulan_tahun not in revenue_by_month:
-            revenue_by_month[bulan_tahun] = 0
-        revenue_by_month[bulan_tahun] += total_harga
-
-    return jsonify({'success': True, 'revenue_by_month': revenue_by_month})
 
 @app.route('/api/logout', methods=['GET'])
 def logout():
