@@ -10,6 +10,8 @@ from io import BytesIO
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 
+from bson.son import SON
+
 
 app = Flask(__name__)
 CORS(app)
@@ -226,6 +228,45 @@ def export_transactions():
     
     else:
         return jsonify({'success': False, 'message': 'Invalid format specified'})
+    
+
+@app.route('/api/transactions_by_date', methods=['GET'])
+def get_transactions_by_date():
+    # Ambil tanggal mulai dan akhir dari query parameter
+    start_date_str = request.args.get('start_date')
+    end_date_str = request.args.get('end_date')
+
+    # Ubah string ke format datetime
+    start_date = datetime.strptime(start_date_str, '%Y-%m-%d')
+    end_date = datetime.strptime(end_date_str, '%Y-%m-%d')
+
+    # Agregasi transaksi berdasarkan tanggal dan hitung total harga
+    pipeline = [
+        {
+            '$match': {
+                'tanggal_transaksi': {
+                    '$gte': start_date,
+                    '$lte': end_date
+                }
+            }
+        },
+        {
+            '$group': {
+                '_id': {
+                    '$dateToString': { 'format': '%Y-%m-%d', 'date': '$tanggal_transaksi' }
+                },
+                'total_pendapatan': { '$sum': '$harga_total' }
+            }
+        },
+        {
+            '$sort': SON([('_id', 1)])  # Sortir berdasarkan tanggal
+        }
+    ]
+
+    transactions = list(transaksi.aggregate(pipeline))
+
+    return jsonify({'success': True, 'transactions': transactions})
+
 
 if __name__ == '__main__':
     app.run(debug=True)

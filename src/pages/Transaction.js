@@ -47,6 +47,12 @@ const Transactions = () => {
 
   const transactionColumns = [
     { title: "Kode Pesanan", dataIndex: "kode_barang", key: "kode_barang" },
+    {
+      title: "Tanggal Transaksi",
+      dataIndex: "tanggal_transaksi",
+      key: "tanggal_transaksi",
+      render: (text) => new Date(text).toLocaleDateString(),
+    },
     { title: "Nama Barang", dataIndex: "nama_barang", key: "nama_barang" },
     { title: "Jenis Barang", dataIndex: "jenis_barang", key: "jenis_barang" },
     {

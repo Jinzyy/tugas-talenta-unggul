@@ -18,6 +18,7 @@
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.23.1",
     "react-scripts": "5.0.1",
+    "recharts": "^2.12.7",
     "tokobawang-dashboard": "file:",
     "web-vitals": "^2.1.4"
   },
