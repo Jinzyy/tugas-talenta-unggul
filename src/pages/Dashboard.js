@@ -102,7 +102,11 @@ const Dashboard = () => {
         <div className="site-layout-background" style={{ minHeight: 360 }}>
           <h2>Grafik Pendapatan Harian</h2>
           <RangePicker onChange={onDateRangeChange} />
-          <Button type="primary" onClick={fetchTransactions}>
+          <Button
+            type="primary"
+            onClick={fetchTransactions}
+            style={{ marginLeft: "8px" }}
+          >
             Tampilkan Grafik
           </Button>
           {transactions.length > 0 && (

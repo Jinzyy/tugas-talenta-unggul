@@ -91,7 +91,7 @@ const Transactions = () => {
           <Button
             icon={<FileAddFilled />}
             onClick={() => exportTransactions("csv")}
-            style={{ marginRight: "8px" }}
+            style={{ marginBottom: "20px" }}
             type="primary"
           >
             Export to CSV
