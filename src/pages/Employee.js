@@ -122,6 +122,7 @@ const Employee = () => {
             type="primary"
             onClick={() => showEditModal(record)}
             icon={<EditFilled />}
+            style={{ marginRight: "8px" }}
           ></Button>
           <Button
             type="primary"
