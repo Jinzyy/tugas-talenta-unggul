@@ -146,9 +146,11 @@ const Transactions = () => {
           <Upload
             beforeUpload={importTransactions}
             showUploadList={false}
-            icon=<ImportOutlined />
+            icon={<ImportOutlined />}
           >
-            <Button type="primary">Import from CSV</Button>
+            <Button disabled type="primary">
+              Import from CSV
+            </Button>
           </Upload>
           <Button
             icon={<FileAddFilled />}

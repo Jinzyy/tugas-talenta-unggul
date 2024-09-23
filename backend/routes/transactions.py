@@ -93,27 +93,33 @@ def import_transactions():
         # Read the CSV file
         df = pd.read_csv(file)
 
+        # Ensure the column names match by stripping spaces and lowercasing them
+        df.columns = df.columns.str.strip().str.lower()
+
         for index, row in df.iterrows():
             try:
                 # Ensure tanggal_transaksi is not None before parsing
-                if row.get('Tanggal Transaksi') is not None:
-                    tanggal_transaksi = datetime.strptime(row['Tanggal Transaksi'], '%Y-%m-%d')
+                if row.get('tanggal_transaksi') is not None:
+                    # Parse the date, handling different formats
+                    tanggal_transaksi = pd.to_datetime(row['tanggal_transaksi'], errors='coerce', format='%Y-%m-%d')
+                    if pd.isna(tanggal_transaksi):
+                        raise ValueError("Invalid date format")
                 else:
-                    logging.warning(f"Skipping row {index} due to missing 'Tanggal Transaksi'")
+                    logging.warning(f"Skipping row {index} due to missing 'tanggal_transaksi'")
                     continue  # Skip this row if tanggal is None
 
                 # Create the transaction object
                 transaction = {
-                    'kode_barang': row.get('Kode Pesanan'),
+                    'kode_barang': row.get('kode_barang'),
                     'tanggal_transaksi': tanggal_transaksi,
-                    'nama_barang': row.get('Nama Barang'),
-                    'jenis_barang': row.get('Jenis Barang'),
-                    'jumlah_barang': row.get('Jumlah Barang'),
-                    'berat': row.get('Berat'),
-                    'harga': row.get('Harga Barang'),
-                    'harga_total': row.get('Harga Total'),
-                    'pelanggan': row.get('Pelanggan'),
-                    'nama_pegawai': row.get('Nama Pegawai'),
+                    'nama_barang': row.get('nama_barang'),
+                    'jenis_barang': row.get('jenis_barang'),
+                    'jumlah_barang': row.get('jumlah_barang'),
+                    'berat': row.get('berat'),
+                    'harga': row.get('harga'),
+                    'harga_total': row.get('harga_total'),
+                    'pelanggan': row.get('pelanggan'),
+                    'nama_pegawai': row.get('nama_pegawai'),
                 }
 
                 # Insert the transaction into the database
