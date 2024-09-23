@@ -1,21 +1,30 @@
 import React, { useEffect, useState } from "react";
-import { Table, message, Button } from "antd";
+import { Table, message, Button, DatePicker } from "antd";
 import axios from "axios";
 import LayoutUtama from "../components/Layoututama";
 import { Content } from "antd/es/layout/layout";
-
 import { FileAddFilled } from "@ant-design/icons";
+import moment from "moment";
+
+const { RangePicker } = DatePicker;
 
 const Transactions = () => {
   const [transactions, setTransactions] = useState([]);
+  const [dateRange, setDateRange] = useState([null, null]);
 
   useEffect(() => {
     fetchTransactions();
-  }, []);
+  }, [dateRange]);
 
   const fetchTransactions = () => {
+    const params = {};
+    if (dateRange[0] && dateRange[1]) {
+      params.start_date = dateRange[0].format("YYYY-MM-DD");
+      params.end_date = dateRange[1].format("YYYY-MM-DD");
+    }
+
     axios
-      .get("http://localhost:5000/api/transactions")
+      .get("http://localhost:5000/api/transactions", { params })
       .then((response) => {
         setTransactions(response.data.transactions);
       })
@@ -25,8 +34,15 @@ const Transactions = () => {
   };
 
   const exportTransactions = (format) => {
+    const params = {};
+    if (dateRange[0] && dateRange[1]) {
+      params.start_date = dateRange[0].format("YYYY-MM-DD");
+      params.end_date = dateRange[1].format("YYYY-MM-DD");
+    }
+
     axios
       .get(`http://localhost:5000/api/export_transactions?format=${format}`, {
+        params,
         responseType: "blob",
       })
       .then((response) => {
@@ -35,7 +51,7 @@ const Transactions = () => {
         link.href = url;
         link.setAttribute(
           "download",
-          format === "csv" ? "transactions.csv" : "transactions.pdf"
+          format === "csv" ? "transactions.csv" : "transactions.xlsx"
         );
         document.body.appendChild(link);
         link.click();
@@ -43,6 +59,10 @@ const Transactions = () => {
       .catch(() => {
         message.error(`Failed to export transactions as ${format}`);
       });
+  };
+
+  const handleDateRangeChange = (dates) => {
+    setDateRange(dates);
   };
 
   const transactionColumns = [
@@ -88,13 +108,25 @@ const Transactions = () => {
       <Content style={{ margin: "16px" }}>
         <div>
           <h2>Daftar Transaksi</h2>
+          <RangePicker
+            onChange={handleDateRangeChange}
+            style={{ marginBottom: "20px" }}
+          />
           <Button
             icon={<FileAddFilled />}
             onClick={() => exportTransactions("csv")}
-            style={{ marginBottom: "20px" }}
+            style={{ marginBottom: "20px", marginLeft: "10px" }}
             type="primary"
           >
             Export to CSV
+          </Button>
+          <Button
+            icon={<FileAddFilled />}
+            onClick={() => exportTransactions("excel")}
+            style={{ marginBottom: "20px", marginLeft: "10px" }}
+            type="primary"
+          >
+            Export to Excel
           </Button>
           <Table
             columns={transactionColumns}
