@@ -4,3 +4,4 @@ flask-cors==4.0.1         # Untuk mengaktifkan CORS (Cross-Origin Resource Shari
 pandas==2.2.2              # Untuk manipulasi data dan ekspor data ke CSV
 reportlab==4.2.0          # Untuk ekspor PDF
 xlswriter==3.2.0
+python-dotenv==1.0.1
