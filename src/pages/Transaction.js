@@ -133,6 +133,14 @@ const Transactions = () => {
           />
           <Button
             icon={<FileAddFilled />}
+            onClick={() => exportTransactions("excel")}
+            style={{ marginBottom: "20px", marginLeft: "10px" }}
+            type="primary"
+          >
+            Export to Excel
+          </Button>
+          <Button
+            icon={<FileAddFilled />}
             onClick={() => exportTransactions("csv")}
             style={{
               marginBottom: "20px",
@@ -152,14 +160,6 @@ const Transactions = () => {
               Import from CSV
             </Button>
           </Upload>
-          <Button
-            icon={<FileAddFilled />}
-            onClick={() => exportTransactions("excel")}
-            style={{ marginBottom: "20px", marginLeft: "10px" }}
-            type="primary"
-          >
-            Export to Excel
-          </Button>
 
           <Table
             columns={transactionColumns}
