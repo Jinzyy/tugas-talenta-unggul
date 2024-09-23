@@ -6,8 +6,12 @@ import pandas as pd
 from io import BytesIO
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
+import csv
+import logging
 
 transactions_bp = Blueprint('transactions', __name__)
+
+logging.basicConfig(level=logging.INFO)
 
 @transactions_bp.route('/api/transactions', methods=['GET'])
 def get_transactions():
@@ -55,6 +59,8 @@ def export_transactions():
 
     df = pd.DataFrame(transactions_list)
 
+    df.drop(columns=['_id'], inplace=True)
+
     if export_format == 'csv':
         csv_data = df.to_csv(index=False)
         response = BytesIO()
@@ -73,6 +79,53 @@ def export_transactions():
         return send_file(output, mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', as_attachment=True, download_name=filename)
 
     return jsonify({'success': False, 'message': 'Invalid format specified'})
+
+@transactions_bp.route('/api/import_transactions', methods=['POST'])
+def import_transactions():
+    if 'file' not in request.files:
+        return jsonify({'success': False, 'message': 'No file part'}), 400
+
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({'success': False, 'message': 'No selected file'}), 400
+
+    if file and file.filename.endswith('.csv'):
+        # Read the CSV file
+        df = pd.read_csv(file)
+
+        for index, row in df.iterrows():
+            try:
+                # Ensure tanggal_transaksi is not None before parsing
+                if row.get('Tanggal Transaksi') is not None:
+                    tanggal_transaksi = datetime.strptime(row['Tanggal Transaksi'], '%Y-%m-%d')
+                else:
+                    logging.warning(f"Skipping row {index} due to missing 'Tanggal Transaksi'")
+                    continue  # Skip this row if tanggal is None
+
+                # Create the transaction object
+                transaction = {
+                    'kode_barang': row.get('Kode Pesanan'),
+                    'tanggal_transaksi': tanggal_transaksi,
+                    'nama_barang': row.get('Nama Barang'),
+                    'jenis_barang': row.get('Jenis Barang'),
+                    'jumlah_barang': row.get('Jumlah Barang'),
+                    'berat': row.get('Berat'),
+                    'harga': row.get('Harga Barang'),
+                    'harga_total': row.get('Harga Total'),
+                    'pelanggan': row.get('Pelanggan'),
+                    'nama_pegawai': row.get('Nama Pegawai'),
+                }
+
+                # Insert the transaction into the database
+                result = transaksi().insert_one(transaction)
+                logging.info(f"Inserted transaction with id: {result.inserted_id}")
+
+            except Exception as e:
+                logging.error(f"Error processing row {index}: {e}")
+
+        return jsonify({'success': True, 'message': 'Transactions imported successfully'}), 200
+
+    return jsonify({'success': False, 'message': 'Invalid file type. Please upload a CSV file.'}), 400
 
 @transactions_bp.route('/api/transactions_by_date', methods=['GET'])
 def get_transactions_by_date():
