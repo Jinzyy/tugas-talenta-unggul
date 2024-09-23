@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Table, message, Button, DatePicker } from "antd";
+import { Table, message, Button, DatePicker, Upload } from "antd";
 import axios from "axios";
 import LayoutUtama from "../components/Layoututama";
 import { Content } from "antd/es/layout/layout";
-import { FileAddFilled } from "@ant-design/icons";
+import { FileAddFilled, ImportOutlined } from "@ant-design/icons";
 import moment from "moment";
 
 const { RangePicker } = DatePicker;
@@ -51,7 +51,9 @@ const Transactions = () => {
         link.href = url;
         link.setAttribute(
           "download",
-          format === "csv" ? "transactions.csv" : "transactions.xlsx"
+          format === "csv"
+            ? `transaction_${moment().format("YYYY-MM-DD")}.csv`
+            : `transaction_${moment().format("YYYY-MM-DD")}.xlsx`
         );
         document.body.appendChild(link);
         link.click();
@@ -61,8 +63,25 @@ const Transactions = () => {
       });
   };
 
-  const handleDateRangeChange = (dates) => {
-    setDateRange(dates);
+  const importTransactions = (file) => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    axios
+      .post("http://localhost:5000/api/import_transactions", formData)
+      .then((response) => {
+        if (response.data.success) {
+          message.success(response.data.message);
+          fetchTransactions(); // Refresh the table after import
+        } else {
+          message.error(response.data.message);
+        }
+      })
+      .catch(() => {
+        message.error("Failed to import transactions");
+      });
+
+    return false; // Prevent default upload behavior
   };
 
   const transactionColumns = [
@@ -109,17 +128,28 @@ const Transactions = () => {
         <div>
           <h2>Daftar Transaksi</h2>
           <RangePicker
-            onChange={handleDateRangeChange}
+            onChange={setDateRange}
             style={{ marginBottom: "20px" }}
           />
           <Button
             icon={<FileAddFilled />}
             onClick={() => exportTransactions("csv")}
-            style={{ marginBottom: "20px", marginLeft: "10px" }}
+            style={{
+              marginBottom: "20px",
+              marginLeft: "10px",
+              marginRight: "10px",
+            }}
             type="primary"
           >
             Export to CSV
           </Button>
+          <Upload
+            beforeUpload={importTransactions}
+            showUploadList={false}
+            icon=<ImportOutlined />
+          >
+            <Button type="primary">Import from CSV</Button>
+          </Upload>
           <Button
             icon={<FileAddFilled />}
             onClick={() => exportTransactions("excel")}
@@ -128,6 +158,7 @@ const Transactions = () => {
           >
             Export to Excel
           </Button>
+
           <Table
             columns={transactionColumns}
             dataSource={transactions}
