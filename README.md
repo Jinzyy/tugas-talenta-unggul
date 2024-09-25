@@ -16,15 +16,13 @@
 
 <img src="https://res.cloudinary.com/dwkvqfqtd/image/upload/v1719220906/tugas-talenta-unggul/meado5mdpsqv1hbraphf.png" alt="project-screenshot" width="1889" height="875/">
 
-  
-  
 <h2>🧐 Features</h2>
 
 Here're some of the project's best features:
 
-*   Database cloud server menggunakan MongoDB Atlas
-*   Export ke CSV dari tabel transaksi
-*   Framework React Js dengan library Ant Design
+- Database cloud server menggunakan MongoDB Atlas
+- Export ke CSV dari tabel transaksi
+- Framework React Js dengan library Ant Design
 
 <h2>🛠️ Installation Steps:</h2>
 
@@ -61,7 +59,7 @@ cd ..  backend
 <p>6. Install library python</p>
 
 ```
-pip install flask pymongo flask-cors pandas
+pip install -r requirements.txt
 ```
 
 <p>7. Run backend</p>
@@ -76,15 +74,13 @@ python app.py
 npm start
 ```
 
-  
-  
 <h2>💻 Built with</h2>
 
 Technologies used in the project:
 
-*   React Js
-*   Ant Design
-*   Python
-*   Flask
-*   Javascript
-*   MongoDB
+- React Js
+- Ant Design
+- Python
+- Flask
+- Javascript
+- MongoDB
