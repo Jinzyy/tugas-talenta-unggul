@@ -41,6 +41,7 @@ def export_transactions():
 
     current_date = datetime.now().strftime('%Y-%m-%d')
 
+    # Fetch transactions based on the date range provided
     if start_date_str and end_date_str:
         start_date = datetime.strptime(start_date_str, '%Y-%m-%d')
         end_date = datetime.strptime(end_date_str, '%Y-%m-%d')
@@ -50,32 +51,62 @@ def export_transactions():
                 '$lte': end_date
             }
         }))
+        date_range_text = f"Periode: {start_date_str} - {end_date_str}"
     else:
         transactions_list = list(transaksi().find())
-        
+        date_range_text = "Periode: Semua data"
+
     for item in transactions_list:
         item['_id'] = str(item['_id'])
 
+    # Convert data to a DataFrame
     df = pd.DataFrame(transactions_list)
-
     df.drop(columns=['_id'], inplace=True)
 
-    if export_format == 'csv':
-        csv_data = df.to_csv(index=False)
-        response = BytesIO()
-        response.write(csv_data.encode('utf-8'))
-        response.seek(0)
-        filename = f'transaction_{current_date}.csv'
-        return send_file(response, mimetype='text/csv', as_attachment=True, download_name=filename)
-
-    elif export_format == 'excel':
+    if export_format == 'excel':
         output = BytesIO()
         writer = pd.ExcelWriter(output, engine='xlsxwriter')
-        df.to_excel(writer, index=False, sheet_name='Transactions')
+        workbook = writer.book
+        worksheet = workbook.add_worksheet('Transactions')
+
+        # Define formats
+        title_format = workbook.add_format({'bold': True, 'font_size': 14})
+        date_range_format = workbook.add_format({'italic': True})
+        
+        # Header format: Light blue background, bold, with border
+        header_format = workbook.add_format({
+            'bold': True,
+            'bg_color': '#ADD8E6',  # Light blue color
+            'border': 1
+        })
+        
+        # Data format: With border
+        data_format = workbook.add_format({'border': 1})
+
+        # Add title to the worksheet
+        worksheet.merge_range('A1:H1', 'LAPORAN TRANSAKSI CV BERKAT', title_format)
+        
+        # Add date range information
+        worksheet.merge_range('A2:H2', date_range_text, date_range_format)
+
+        # Write column headers with the new format
+        for i, column in enumerate(df.columns):
+            worksheet.write(3, i, column, header_format)
+
+        # Write data to the worksheet with borders
+        for row_num, row_data in enumerate(df.values, 4):
+            for col_num, cell_data in enumerate(row_data):
+                worksheet.write(row_num, col_num, cell_data, data_format)
+
+        # Adjust column width for better readability
+        worksheet.set_column('A:H', 20)
+
+        # Save the file
         writer.close()
         output.seek(0)
         filename = f'transaction_{current_date}.xlsx'
-        return send_file(output, mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', as_attachment=True, download_name=filename)
+        return send_file(output, mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                         as_attachment=True, download_name=filename)
 
     return jsonify({'success': False, 'message': 'Invalid format specified'})
 
