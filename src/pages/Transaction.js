@@ -6,6 +6,8 @@ import { Content } from "antd/es/layout/layout";
 import { FileAddFilled, ImportOutlined } from "@ant-design/icons";
 import moment from "moment";
 
+import config from "../config";
+
 const { RangePicker } = DatePicker;
 
 const Transactions = () => {
@@ -24,7 +26,7 @@ const Transactions = () => {
     }
 
     axios
-      .get("http://localhost:5000/api/transactions", { params })
+      .get(`${config.API_BASE_URL}/api/transactions`, { params })
       .then((response) => {
         setTransactions(response.data.transactions);
       })
@@ -41,7 +43,7 @@ const Transactions = () => {
     }
 
     axios
-      .get(`http://localhost:5000/api/export_transactions?format=${format}`, {
+      .get(`${config.API_BASE_URL}/api/export_transactions?format=${format}`, {
         params,
         responseType: "blob",
       })
@@ -68,7 +70,7 @@ const Transactions = () => {
     formData.append("file", file);
 
     axios
-      .post("http://localhost:5000/api/import_transactions", formData)
+      .post(`${config.API_BASE_URL}/api/import_transactions`, formData)
       .then((response) => {
         if (response.data.success) {
           message.success(response.data.message);
@@ -156,9 +158,7 @@ const Transactions = () => {
             showUploadList={false}
             icon={<ImportOutlined />}
           >
-            <Button disabled type="primary">
-              Import from CSV
-            </Button>
+            <Button type="primary">Import from CSV</Button>
           </Upload>
 
           <Table
