@@ -5,6 +5,8 @@ import LayoutUtama from "../components/Layoututama";
 import { Content } from "antd/es/layout/layout";
 import { EditFilled, DeleteFilled, SearchOutlined } from "@ant-design/icons";
 
+import config from "../config";
+
 const Inventory = () => {
   const [inventory, setInventory] = useState([]);
   const [filteredInventory, setFilteredInventory] = useState([]);
@@ -19,7 +21,7 @@ const Inventory = () => {
 
   const fetchInventory = () => {
     axios
-      .get("http://localhost:5000/api/inventory")
+      .get(`${config.API_BASE_URL}/api/inventory`)
       .then((response) => {
         setInventory(response.data.inventory_summary);
         setFilteredInventory(response.data.inventory_summary);
@@ -31,7 +33,7 @@ const Inventory = () => {
 
   const addInventory = (values) => {
     axios
-      .post("http://localhost:5000/api/inventory", values)
+      .post(`${config.API_BASE_URL}/api/inventory`, values)
       .then(() => {
         fetchInventory();
         form.resetFields();
@@ -44,7 +46,7 @@ const Inventory = () => {
 
   const updateInventory = (values) => {
     axios
-      .put(`http://localhost:5000/api/inventory/${editingItem._id}`, values)
+      .put(`${config.API_BASE_URL}/api/inventory/${editingItem._id}`, values)
       .then(() => {
         fetchInventory();
         setIsModalVisible(false);
@@ -57,7 +59,7 @@ const Inventory = () => {
 
   const deleteInventory = (id) => {
     axios
-      .delete(`http://localhost:5000/api/inventory/${id}`)
+      .delete(`${config.API_BASE_URL}/api/inventory/${id}`)
       .then(() => {
         fetchInventory();
         message.success("Item berhasil dihapus");

@@ -5,6 +5,8 @@ import LayoutUtama from "../components/Layoututama";
 import { Content } from "antd/es/layout/layout";
 import { EditFilled, DeleteFilled, SearchOutlined } from "@ant-design/icons";
 
+import config from "../config";
+
 const { Option } = Select;
 
 const Employee = () => {
@@ -24,7 +26,7 @@ const Employee = () => {
 
   const fetchEmployees = () => {
     axios
-      .get("http://localhost:5000/api/pegawai")
+      .get(`${config.API_BASE_URL}/api/pegawai`)
       .then((response) => {
         const filteredData = response.data.pegawai.filter((employee) =>
           employee.username.toLowerCase().includes(searchTerm.toLowerCase())
@@ -38,7 +40,7 @@ const Employee = () => {
 
   const addEmployee = (values) => {
     axios
-      .post("http://localhost:5000/api/pegawai", values)
+      .post(`${config.API_BASE_URL}/api/pegawai`, values)
       .then(() => {
         fetchEmployees();
         form.resetFields();
@@ -51,7 +53,7 @@ const Employee = () => {
 
   const updateEmployee = (values) => {
     axios
-      .put(`http://localhost:5000/api/pegawai/${editingEmployee._id}`, values)
+      .put(`${config.API_BASE_URL}/api/pegawai/${editingEmployee._id}`, values)
       .then(() => {
         fetchEmployees();
         setIsModalVisible(false);
@@ -64,7 +66,7 @@ const Employee = () => {
 
   const deleteEmployee = (id) => {
     axios
-      .delete(`http://localhost:5000/api/pegawai/${id}`)
+      .delete(`${config.API_BASE_URL}/api/pegawai/${id}`)
       .then(() => {
         fetchEmployees();
         message.success("Employee deleted successfully");

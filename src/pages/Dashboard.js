@@ -14,6 +14,8 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
+import config from "../config";
+
 const { Content } = Layout;
 const { RangePicker } = DatePicker;
 
@@ -27,7 +29,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/home") // Sesuaikan dengan URL backend Anda
+      .get(`${config.API_BASE_URL}/home`) // Sesuaikan dengan URL backend Anda
       .then((response) => {
         setInventory(response.data.inventory_summary);
         setEmployees(response.data.employee_summary);
@@ -40,7 +42,7 @@ const Dashboard = () => {
   const fetchTransactions = () => {
     if (startDate && endDate) {
       axios
-        .get("http://localhost:5000/api/transactions_by_date", {
+        .get(`${config.API_BASE_URL}/api/transactions_by_date`, {
           params: {
             start_date: startDate.format("YYYY-MM-DD"),
             end_date: endDate.format("YYYY-MM-DD"),

@@ -4,15 +4,13 @@ from bson.son import SON
 from datetime import datetime
 import pandas as pd
 from io import BytesIO
-from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import letter
-import csv
 import logging
 
 transactions_bp = Blueprint('transactions', __name__)
 
 logging.basicConfig(level=logging.INFO)
 
+# Route to get transactions
 @transactions_bp.route('/api/transactions', methods=['GET'])
 def get_transactions():
     start_date_str = request.args.get('start_date')
@@ -34,6 +32,7 @@ def get_transactions():
         item['_id'] = str(item['_id'])
     return jsonify({'success': True, 'transactions': transactions_list})
 
+# Route to export transactions
 @transactions_bp.route('/api/export_transactions', methods=['GET'])
 def export_transactions():
     export_format = request.args.get('format')
@@ -80,6 +79,7 @@ def export_transactions():
 
     return jsonify({'success': False, 'message': 'Invalid format specified'})
 
+# Route to import transactions
 @transactions_bp.route('/api/import_transactions', methods=['POST'])
 def import_transactions():
     if 'file' not in request.files:
@@ -98,15 +98,10 @@ def import_transactions():
 
         for index, row in df.iterrows():
             try:
-                # Ensure tanggal_transaksi is not None before parsing
-                if row.get('tanggal_transaksi') is not None:
-                    # Parse the date, handling different formats
-                    tanggal_transaksi = pd.to_datetime(row['tanggal_transaksi'], errors='coerce', format='%Y-%m-%d')
-                    if pd.isna(tanggal_transaksi):
-                        raise ValueError("Invalid date format")
-                else:
-                    logging.warning(f"Skipping row {index} due to missing 'tanggal_transaksi'")
-                    continue  # Skip this row if tanggal is None
+                # Parse the date, handling different formats
+                tanggal_transaksi = pd.to_datetime(row['tanggal_transaksi'], errors='coerce', format='%Y-%m-%d %H:%M:%S')
+                if pd.isna(tanggal_transaksi):
+                    raise ValueError("Invalid date format")
 
                 # Create the transaction object
                 transaction = {
@@ -133,6 +128,7 @@ def import_transactions():
 
     return jsonify({'success': False, 'message': 'Invalid file type. Please upload a CSV file.'}), 400
 
+# Route to get aggregated transactions by date
 @transactions_bp.route('/api/transactions_by_date', methods=['GET'])
 def get_transactions_by_date():
     start_date_str = request.args.get('start_date')

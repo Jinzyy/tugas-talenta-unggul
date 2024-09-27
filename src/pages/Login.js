@@ -3,6 +3,8 @@ import { Form, Input, Button, Alert, Typography } from "antd";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
+import config from "../config";
+
 const { Title } = Typography;
 
 const Login = () => {
@@ -11,7 +13,7 @@ const Login = () => {
 
   const onFinish = (values) => {
     axios
-      .post("http://localhost:5000/api/login", values)
+      .post(`${config.API_BASE_URL}/api/login`, values)
       .then((response) => {
         if (response.data.success) {
           navigate("/home");
