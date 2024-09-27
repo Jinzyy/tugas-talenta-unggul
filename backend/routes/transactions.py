@@ -5,6 +5,7 @@ from datetime import datetime
 import pandas as pd
 from io import BytesIO
 import logging
+import csv
 
 transactions_bp = Blueprint('transactions', __name__)
 
@@ -93,10 +94,22 @@ def export_transactions():
         for i, column in enumerate(df.columns):
             worksheet.write(3, i, column, header_format)
 
+        # Apply date format for 'tanggal_transaksi' column
+        date_format = workbook.add_format({'num_format': 'yyyy-mm-dd hh:mm:ss', 'border': 1})
+
         # Write data to the worksheet with borders
         for row_num, row_data in enumerate(df.values, 4):
             for col_num, cell_data in enumerate(row_data):
-                worksheet.write(row_num, col_num, cell_data, data_format)
+                if df.columns[col_num] == 'tanggal_transaksi':
+                    # Convert the timestamp into a proper datetime object
+                    if isinstance(cell_data, str):
+                        try:
+                            cell_data = datetime.strptime(cell_data, '%Y-%m-%d %H:%M:%S')
+                        except ValueError:
+                            pass  # Handle error if string is not a date
+                    worksheet.write_datetime(row_num, col_num, cell_data, date_format)
+                else:
+                    worksheet.write(row_num, col_num, cell_data, data_format)
 
         # Adjust column width for better readability
         worksheet.set_column('A:H', 20)
@@ -107,6 +120,14 @@ def export_transactions():
         filename = f'transaction_{current_date}.xlsx'
         return send_file(output, mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                          as_attachment=True, download_name=filename)
+
+    if export_format == 'csv':
+        csv_data = df.to_csv(index=False)
+        response = BytesIO()
+        response.write(csv_data.encode('utf-8'))
+        response.seek(0)
+        filename = f'transaction_{current_date}.csv'
+        return send_file(response, mimetype='text/csv', as_attachment=True, download_name=filename)
 
     return jsonify({'success': False, 'message': 'Invalid format specified'})
 
