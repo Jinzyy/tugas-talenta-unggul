@@ -128,25 +128,33 @@ const Inventory = () => {
           <Form form={form} onFinish={addInventory}>
             <Form.Item
               name="nama_barang"
-              rules={[{ required: true, message: "Please input the name!" }]}
+              rules={[
+                { required: true, message: "Mohon masukkan nama barang!" },
+              ]}
             >
               <Input placeholder="Nama Barang" />
             </Form.Item>
             <Form.Item
               name="jenis_barang"
-              rules={[{ required: true, message: "Please input the type!" }]}
+              rules={[
+                { required: true, message: "Mohon masukkan tipe barang!" },
+              ]}
             >
               <Input placeholder="Jenis Barang" />
             </Form.Item>
             <Form.Item
               name="harga_barang"
-              rules={[{ required: true, message: "Please input the price!" }]}
+              rules={[
+                { required: true, message: "Mohon masukkan harga barang!" },
+              ]}
             >
               <Input placeholder="Harga Barang" />
             </Form.Item>
             <Form.Item
               name="stok_barang"
-              rules={[{ required: true, message: "Please input the stock!" }]}
+              rules={[
+                { required: true, message: "Mohon masukkan jumlah stok!" },
+              ]}
             >
               <Input placeholder="Stok Barang" />
             </Form.Item>
@@ -182,25 +190,33 @@ const Inventory = () => {
             <Form initialValues={editingItem} onFinish={handleModalOk}>
               <Form.Item
                 name="nama_barang"
-                rules={[{ required: true, message: "Please input the name!" }]}
+                rules={[
+                  { required: true, message: "Mohon masukkan nama barang!" },
+                ]}
               >
                 <Input placeholder="Nama Barang" />
               </Form.Item>
               <Form.Item
                 name="jenis_barang"
-                rules={[{ required: true, message: "Please input the type!" }]}
+                rules={[
+                  { required: true, message: "Mohon masukkan tipe barang!" },
+                ]}
               >
                 <Input placeholder="Jenis Barang" />
               </Form.Item>
               <Form.Item
                 name="harga_barang"
-                rules={[{ required: true, message: "Please input the price!" }]}
+                rules={[
+                  { required: true, message: "Mohon masukkan harga barang!" },
+                ]}
               >
                 <Input placeholder="Harga Barang" />
               </Form.Item>
               <Form.Item
                 name="stok_barang"
-                rules={[{ required: true, message: "Please input the stock!" }]}
+                rules={[
+                  { required: true, message: "Mohon masukkan jumlah stok!" },
+                ]}
               >
                 <Input placeholder="Stok Barang" />
               </Form.Item>

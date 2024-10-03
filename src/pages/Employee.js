@@ -69,10 +69,10 @@ const Employee = () => {
       .delete(`${config.API_BASE_URL}/api/pegawai/${id}`)
       .then(() => {
         fetchEmployees();
-        message.success("Employee deleted successfully");
+        message.success("Berhasil menghapus pegawai");
       })
       .catch(() => {
-        message.error("Failed to delete employee");
+        message.error("Gagal menghapus pegawai");
       });
   };
 
@@ -145,16 +145,14 @@ const Employee = () => {
           <Form form={form} onFinish={addEmployee}>
             <Form.Item
               name="username"
-              rules={[
-                { required: true, message: "Please input the username!" },
-              ]}
+              rules={[{ required: true, message: "Mohon masukkan username!" }]}
             >
               <Input placeholder="Username" />
             </Form.Item>
             <Form.Item
               name="tempat_lahir"
               rules={[
-                { required: true, message: "Please input the place of birth!" },
+                { required: true, message: "Mohon masukkan tempat kelahiran!" },
               ]}
             >
               <Input placeholder="Tempat Lahir" />
@@ -162,14 +160,16 @@ const Employee = () => {
             <Form.Item
               name="tanggal_lahir"
               rules={[
-                { required: true, message: "Please input the date of birth!" },
+                { required: true, message: "Mohon masukkan tanggal lahir!" },
               ]}
             >
               <Input type="date" />
             </Form.Item>
             <Form.Item
               name="jenis_kelamin"
-              rules={[{ required: true, message: "Please select the gender!" }]}
+              rules={[
+                { required: true, message: "Mohon pilih jenis kelamin!" },
+              ]}
             >
               <Select placeholder="Jenis Kelamin">
                 <Option value="Laki-laki">Laki-laki</Option>
@@ -178,21 +178,21 @@ const Employee = () => {
             </Form.Item>
             <Form.Item
               name="alamat"
-              rules={[{ required: true, message: "Please input the address!" }]}
+              rules={[{ required: true, message: "Mohon masukkan alamat!" }]}
             >
               <Input placeholder="Alamat" />
             </Form.Item>
             <Form.Item
               name="password"
-              rules={[
-                { required: true, message: "Please input the password!" },
-              ]}
+              rules={[{ required: true, message: "Mohon masukkan password!" }]}
             >
               <Input.Password placeholder="Password" />
             </Form.Item>
             <Form.Item
               name="role"
-              rules={[{ required: true, message: "Please select the role!" }]}
+              rules={[
+                { required: true, message: "Mohon pilih otoritas akun!" },
+              ]}
             >
               <Select placeholder="Role">
                 <Option value="admin">Admin</Option>
@@ -201,7 +201,7 @@ const Employee = () => {
             </Form.Item>
             <Form.Item>
               <Button type="primary" htmlType="submit">
-                Add Employee
+                Tambah Pegawai
               </Button>
             </Form.Item>
           </Form>
@@ -234,7 +234,7 @@ const Employee = () => {
 
           {/* Modal for editing employee */}
           <Modal
-            title="Edit Employee"
+            title="Edit Pegawai"
             visible={isModalVisible}
             onCancel={handleModalCancel}
             footer={null}
@@ -243,7 +243,7 @@ const Employee = () => {
               <Form.Item
                 name="username"
                 rules={[
-                  { required: true, message: "Please input the username!" },
+                  { required: true, message: "Mohon masukkan username!" },
                 ]}
               >
                 <Input placeholder="Username" />
@@ -253,7 +253,7 @@ const Employee = () => {
                 rules={[
                   {
                     required: true,
-                    message: "Please input the place of birth!",
+                    message: "Mohon masukkan tempat kelahiran!",
                   },
                 ]}
               >
@@ -264,7 +264,7 @@ const Employee = () => {
                 rules={[
                   {
                     required: true,
-                    message: "Please input the date of birth!",
+                    message: "Mohon masukkan tanggal lahir!",
                   },
                 ]}
               >
@@ -273,7 +273,7 @@ const Employee = () => {
               <Form.Item
                 name="jenisKelamin"
                 rules={[
-                  { required: true, message: "Please select the gender!" },
+                  { required: true, message: "Mohon pilih jenis kelamin!" },
                 ]}
               >
                 <Select placeholder="Jenis Kelamin">
@@ -283,15 +283,13 @@ const Employee = () => {
               </Form.Item>
               <Form.Item
                 name="alamat"
-                rules={[
-                  { required: true, message: "Please input the address!" },
-                ]}
+                rules={[{ required: true, message: "Mohon masukkan alamat!" }]}
               >
                 <Input placeholder="Alamat" />
               </Form.Item>
               <Form.Item>
                 <Button type="primary" htmlType="submit">
-                  Update Employee
+                  Update Pegawai
                 </Button>
               </Form.Item>
             </Form>
