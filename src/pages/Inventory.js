@@ -3,11 +3,17 @@ import { Table, Button, Form, Input, Modal, message } from "antd";
 import axios from "axios";
 import LayoutUtama from "../components/Layoututama";
 import { Content } from "antd/es/layout/layout";
-import { EditFilled, DeleteFilled, SearchOutlined } from "@ant-design/icons";
+import {
+  EditFilled,
+  DeleteFilled,
+  SearchOutlined,
+  ExclamationCircleOutlined,
+} from "@ant-design/icons";
 
 import config from "../config";
 
 const Inventory = () => {
+  const { confirm } = Modal; // Import confirm dari Modal
   const [inventory, setInventory] = useState([]);
   const [filteredInventory, setFilteredInventory] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -55,6 +61,24 @@ const Inventory = () => {
       .catch(() => {
         message.error("Item gagal di update");
       });
+  };
+
+  // Tambahkan modal konfirmasi sebelum penghapusan
+  const showDeleteConfirm = (id) => {
+    confirm({
+      title: "Apakah Anda yakin ingin menghapus item ini?",
+      icon: <ExclamationCircleOutlined />,
+      content: "Item yang dihapus tidak dapat dikembalikan.",
+      okText: "Ya",
+      okType: "danger",
+      cancelText: "Tidak",
+      onOk() {
+        deleteInventory(id); // Panggil fungsi delete jika user konfirmasi
+      },
+      onCancel() {
+        console.log("Batal menghapus item.");
+      },
+    });
   };
 
   const deleteInventory = (id) => {
@@ -112,7 +136,7 @@ const Inventory = () => {
           <Button
             type="primary"
             danger
-            onClick={() => deleteInventory(record._id)}
+            onClick={() => showDeleteConfirm(record._id)} // Panggil showDeleteConfirm
             icon={<DeleteFilled />}
           ></Button>
         </span>

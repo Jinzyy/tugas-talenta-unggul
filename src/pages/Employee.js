@@ -3,7 +3,12 @@ import { Table, Button, Form, Input, Modal, Select, message } from "antd";
 import axios from "axios";
 import LayoutUtama from "../components/Layoututama";
 import { Content } from "antd/es/layout/layout";
-import { EditFilled, DeleteFilled, SearchOutlined } from "@ant-design/icons";
+import {
+  EditFilled,
+  DeleteFilled,
+  SearchOutlined,
+  ExclamationCircleOutlined,
+} from "@ant-design/icons";
 
 import config from "../config";
 
@@ -65,15 +70,25 @@ const Employee = () => {
   };
 
   const deleteEmployee = (id) => {
-    axios
-      .delete(`${config.API_BASE_URL}/api/pegawai/${id}`)
-      .then(() => {
-        fetchEmployees();
-        message.success("Berhasil menghapus pegawai");
-      })
-      .catch(() => {
-        message.error("Gagal menghapus pegawai");
-      });
+    Modal.confirm({
+      title: "Apakah Anda yakin ingin menghapus item ini?",
+      icon: <ExclamationCircleOutlined />,
+      content: "Item yang dihapus tidak dapat dikembalikan.",
+      okText: "Ya",
+      okType: "danger",
+      cancelText: "Tidak",
+      onOk: () => {
+        axios
+          .delete(`${config.API_BASE_URL}/api/pegawai/${id}`)
+          .then(() => {
+            fetchEmployees();
+            message.success("Berhasil menghapus pegawai");
+          })
+          .catch(() => {
+            message.error("Gagal menghapus pegawai");
+          });
+      },
+    });
   };
 
   const showEditModal = (employee) => {
