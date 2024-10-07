@@ -21,13 +21,17 @@ const Inventory = () => {
   const [form] = Form.useForm();
   const [searchText, setSearchText] = useState("");
 
+  const token = localStorage.getItem("token");
+
   useEffect(() => {
     fetchInventory();
   }, []);
 
   const fetchInventory = () => {
     axios
-      .get(`${config.API_BASE_URL}/api/inventory`)
+      .get(`${config.API_BASE_URL}/api/inventory`, {
+        headers: { Authorization: `Bearer ${token}` }, // Include token in headers
+      })
       .then((response) => {
         setInventory(response.data.inventory_summary);
         setFilteredInventory(response.data.inventory_summary);
@@ -39,7 +43,9 @@ const Inventory = () => {
 
   const addInventory = (values) => {
     axios
-      .post(`${config.API_BASE_URL}/api/inventory`, values)
+      .post(`${config.API_BASE_URL}/api/inventory`, values, {
+        headers: { Authorization: `Bearer ${token}` }, // Include token in headers
+      })
       .then(() => {
         fetchInventory();
         form.resetFields();
@@ -52,7 +58,9 @@ const Inventory = () => {
 
   const updateInventory = (values) => {
     axios
-      .put(`${config.API_BASE_URL}/api/inventory/${editingItem._id}`, values)
+      .put(`${config.API_BASE_URL}/api/inventory/${editingItem._id}`, values, {
+        headers: { Authorization: `Bearer ${token}` }, // Include token in headers
+      })
       .then(() => {
         fetchInventory();
         setIsModalVisible(false);
@@ -83,7 +91,9 @@ const Inventory = () => {
 
   const deleteInventory = (id) => {
     axios
-      .delete(`${config.API_BASE_URL}/api/inventory/${id}`)
+      .delete(`${config.API_BASE_URL}/api/inventory/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }, // Include token in headers
+      })
       .then(() => {
         fetchInventory();
         message.success("Item berhasil dihapus");

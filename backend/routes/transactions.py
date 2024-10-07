@@ -6,6 +6,7 @@ import pandas as pd
 from io import BytesIO
 import logging
 import csv
+from routes.dashboard import token_required
 
 transactions_bp = Blueprint('transactions', __name__)
 
@@ -13,6 +14,7 @@ logging.basicConfig(level=logging.INFO)
 
 # Route to get transactions
 @transactions_bp.route('/api/transactions', methods=['GET'])
+@token_required
 def get_transactions():
     start_date_str = request.args.get('start_date')
     end_date_str = request.args.get('end_date')
@@ -35,6 +37,7 @@ def get_transactions():
 
 # Route to export transactions
 @transactions_bp.route('/api/export_transactions', methods=['GET'])
+@token_required
 def export_transactions():
     export_format = request.args.get('format')
     start_date_str = request.args.get('start_date')
@@ -134,6 +137,7 @@ def export_transactions():
 
 # Route to import transactions
 @transactions_bp.route('/api/import_transactions', methods=['POST'])
+@token_required
 def import_transactions():
     if 'file' not in request.files:
         return jsonify({'success': False, 'message': 'No file part'}), 400
@@ -183,6 +187,7 @@ def import_transactions():
 
 # Route to get aggregated transactions by date
 @transactions_bp.route('/api/transactions_by_date', methods=['GET'])
+@token_required
 def get_transactions_by_date():
     start_date_str = request.args.get('start_date')
     end_date_str = request.args.get('end_date')

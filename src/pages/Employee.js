@@ -25,13 +25,17 @@ const Employee = () => {
   });
   const [form] = Form.useForm();
 
+  const token = localStorage.getItem("token");
+
   useEffect(() => {
     fetchEmployees();
   }, [searchTerm, pagination.current]);
 
   const fetchEmployees = () => {
     axios
-      .get(`${config.API_BASE_URL}/api/pegawai`)
+      .get(`${config.API_BASE_URL}/api/pegawai`, {
+        headers: { Authorization: `Bearer ${token}` }, // Include token in headers
+      })
       .then((response) => {
         const filteredData = response.data.pegawai.filter((employee) =>
           employee.username.toLowerCase().includes(searchTerm.toLowerCase())
@@ -45,7 +49,9 @@ const Employee = () => {
 
   const addEmployee = (values) => {
     axios
-      .post(`${config.API_BASE_URL}/api/pegawai`, values)
+      .post(`${config.API_BASE_URL}/api/pegawai`, values, {
+        headers: { Authorization: `Bearer ${token}` }, // Include token in headers
+      })
       .then(() => {
         fetchEmployees();
         form.resetFields();
@@ -58,7 +64,13 @@ const Employee = () => {
 
   const updateEmployee = (values) => {
     axios
-      .put(`${config.API_BASE_URL}/api/pegawai/${editingEmployee._id}`, values)
+      .put(
+        `${config.API_BASE_URL}/api/pegawai/${editingEmployee._id}`,
+        values,
+        {
+          headers: { Authorization: `Bearer ${token}` }, // Include token in headers
+        }
+      )
       .then(() => {
         fetchEmployees();
         setIsModalVisible(false);
@@ -79,7 +91,9 @@ const Employee = () => {
       cancelText: "Tidak",
       onOk: () => {
         axios
-          .delete(`${config.API_BASE_URL}/api/pegawai/${id}`)
+          .delete(`${config.API_BASE_URL}/api/pegawai/${id}`, {
+            headers: { Authorization: `Bearer ${token}` }, // Include token in headers
+          })
           .then(() => {
             fetchEmployees();
             message.success("Berhasil menghapus pegawai");

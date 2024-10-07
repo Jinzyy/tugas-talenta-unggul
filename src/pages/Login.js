@@ -16,6 +16,9 @@ const Login = () => {
       .post(`${config.API_BASE_URL}/api/login`, values)
       .then((response) => {
         if (response.data.success) {
+          // Menyimpan token ke localStorage
+          localStorage.setItem("token", response.data.token);
+          // Redirect ke halaman home
           navigate("/home");
         } else {
           setError(response.data.message);
