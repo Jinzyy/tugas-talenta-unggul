@@ -39,7 +39,7 @@ const Dashboard = () => {
     axios
       .get(`${config.API_BASE_URL}/home`, {
         headers: {
-          Authorization: `Bearer ${token}`, // Tambahkan kata 'Bearer' di depan token
+          Authorization: `Bearer ${token}`,
         },
       })
       .then((response) => {
