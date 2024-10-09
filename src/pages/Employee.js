@@ -25,7 +25,7 @@ const Employee = () => {
   });
   const [form] = Form.useForm();
 
-  const token = localStorage.getItem("token");
+  const token = sessionStorage.getItem("token");
 
   useEffect(() => {
     fetchEmployees();

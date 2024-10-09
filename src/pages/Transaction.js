@@ -10,7 +10,7 @@ import config from "../config";
 
 const { RangePicker } = DatePicker;
 
-const token = localStorage.getItem("token");
+const token = sessionStorage.getItem("token");
 
 console.log("Token:", token);
 

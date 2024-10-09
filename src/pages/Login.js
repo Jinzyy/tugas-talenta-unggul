@@ -17,6 +17,7 @@ const Login = () => {
       .then((response) => {
         if (response.data.success) {
           // Menyimpan token ke localStorage
+          sessionStorage.setItem("token", response.data.token);
           localStorage.setItem("token", response.data.token);
           // Redirect ke halaman home
           navigate("/home");

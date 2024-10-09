@@ -27,31 +27,30 @@ const Dashboard = () => {
   const [endDate, setEndDate] = useState(null);
   const navigate = useNavigate();
 
-  const token = localStorage.getItem("token");
+  const token = sessionStorage.getItem("token");
 
   useEffect(() => {
-    if (!token) {
+    if (token) {
+      axios
+        .get(`${config.API_BASE_URL}/home`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then((response) => {
+          setInventory(response.data.inventory_summary);
+          setEmployees(response.data.employee_summary);
+        })
+        .catch((error) => {
+          console.error("Error:", error.response);
+          if (error.response.status === 401) {
+            navigate("/"); // Jika 401, arahkan ke halaman login
+          }
+        });
+    } else {
       navigate("/"); // Jika token tidak ada, arahkan ke halaman login
       return;
     }
-
-    // Menggunakan token di dalam header Authorization
-    axios
-      .get(`${config.API_BASE_URL}/home`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((response) => {
-        setInventory(response.data.inventory_summary);
-        setEmployees(response.data.employee_summary);
-      })
-      .catch((error) => {
-        console.error("Error:", error.response);
-        if (error.response.status === 401) {
-          navigate("/"); // Jika 401, arahkan ke halaman login
-        }
-      });
   }, [navigate, token]);
 
   const fetchTransactions = () => {

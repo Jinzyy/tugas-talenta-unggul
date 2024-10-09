@@ -21,7 +21,7 @@ const Inventory = () => {
   const [form] = Form.useForm();
   const [searchText, setSearchText] = useState("");
 
-  const token = localStorage.getItem("token");
+  const token = sessionStorage.getItem("token");
 
   useEffect(() => {
     fetchInventory();
