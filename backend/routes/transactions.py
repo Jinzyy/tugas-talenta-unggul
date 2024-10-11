@@ -122,7 +122,7 @@ def export_transactions():
         output.seek(0)
         filename = f'transaction_{current_date}.xlsx'
         return send_file(output, mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                         as_attachment=True, download_name=filename)
+                            as_attachment=True, download_name=filename)
 
     if export_format == 'csv':
         csv_data = df.to_csv(index=False)
