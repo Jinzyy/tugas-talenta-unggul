@@ -5,8 +5,6 @@ from datetime import datetime
 import pandas as pd
 from io import BytesIO
 import logging
-import csv
-from routes.dashboard import token_required
 
 transactions_bp = Blueprint('transactions', __name__)
 
@@ -14,7 +12,6 @@ logging.basicConfig(level=logging.INFO)
 
 # Route to get transactions
 @transactions_bp.route('/api/transactions', methods=['GET'])
-@token_required
 def get_transactions():
     start_date_str = request.args.get('start_date')
     end_date_str = request.args.get('end_date')
@@ -37,7 +34,6 @@ def get_transactions():
 
 # Route to export transactions
 @transactions_bp.route('/api/export_transactions', methods=['GET'])
-@token_required
 def export_transactions():
     export_format = request.args.get('format')
     start_date_str = request.args.get('start_date')
@@ -97,22 +93,10 @@ def export_transactions():
         for i, column in enumerate(df.columns):
             worksheet.write(3, i, column, header_format)
 
-        # Apply date format for 'tanggal_transaksi' column
-        date_format = workbook.add_format({'num_format': 'yyyy-mm-dd hh:mm:ss', 'border': 1})
-
         # Write data to the worksheet with borders
         for row_num, row_data in enumerate(df.values, 4):
             for col_num, cell_data in enumerate(row_data):
-                if df.columns[col_num] == 'tanggal_transaksi':
-                    # Convert the timestamp into a proper datetime object
-                    if isinstance(cell_data, str):
-                        try:
-                            cell_data = datetime.strptime(cell_data, '%Y-%m-%d %H:%M:%S')
-                        except ValueError:
-                            pass  # Handle error if string is not a date
-                    worksheet.write_datetime(row_num, col_num, cell_data, date_format)
-                else:
-                    worksheet.write(row_num, col_num, cell_data, data_format)
+                worksheet.write(row_num, col_num, cell_data, data_format)
 
         # Adjust column width for better readability
         worksheet.set_column('A:H', 20)
@@ -122,22 +106,12 @@ def export_transactions():
         output.seek(0)
         filename = f'transaction_{current_date}.xlsx'
         return send_file(output, mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                            as_attachment=True, download_name=filename)
-
-    if export_format == 'csv':
-        csv_data = df.to_csv(index=False)
-        response = BytesIO()
-        response.write(csv_data.encode('utf-8'))
-        response.seek(0)
-        filename = f'transaction_{current_date}.csv'
-        return send_file(response, mimetype='text/csv', as_attachment=True, download_name=filename)
+                         as_attachment=True, download_name=filename)
 
     return jsonify({'success': False, 'message': 'Invalid format specified'})
 
-
 # Route to import transactions
 @transactions_bp.route('/api/import_transactions', methods=['POST'])
-@token_required
 def import_transactions():
     if 'file' not in request.files:
         return jsonify({'success': False, 'message': 'No file part'}), 400
@@ -187,7 +161,6 @@ def import_transactions():
 
 # Route to get aggregated transactions by date
 @transactions_bp.route('/api/transactions_by_date', methods=['GET'])
-@token_required
 def get_transactions_by_date():
     start_date_str = request.args.get('start_date')
     end_date_str = request.args.get('end_date')

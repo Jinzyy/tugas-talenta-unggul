@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, session
 from models import barang, pegawai
 import jwt
 
@@ -33,6 +33,14 @@ def token_required(f):
 @dashboard_bp.route('/home', methods=['GET'])
 @token_required  # Apply the token_required decorator to this route
 def homedashboard():
+ # Check if the user is in session
+    if 'user_id' in session:
+        return jsonify({
+            'success': True,
+            'message': 'User authenticated'
+        }), 200
+    
+    # Fetch data if the user is authenticated
     inventory_summary = list(barang().find())
     employee_summary = list(pegawai().find({'role': 'pegawai'}))
     
