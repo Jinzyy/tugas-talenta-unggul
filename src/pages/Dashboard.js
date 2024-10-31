@@ -27,29 +27,45 @@ const Dashboard = () => {
   const [endDate, setEndDate] = useState(null);
   const navigate = useNavigate();
 
+  const token = sessionStorage.getItem("token");
+
   useEffect(() => {
-    axios
-      .get(`${config.API_BASE_URL}/home`) // Sesuaikan dengan URL backend Anda
-      .then((response) => {
-        setInventory(response.data.inventory_summary);
-        setEmployees(response.data.employee_summary);
-      })
-      .catch(() => {
-        navigate("/");
-      });
-  }, [navigate]);
+    if (token) {
+      axios
+        .get(`${config.API_BASE_URL}/home`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then((response) => {
+          setInventory(response.data.inventory_summary);
+          setEmployees(response.data.employee_summary);
+        })
+        .catch((error) => {
+          console.error("Error:", error.response);
+          if (error.response.status === 401) {
+            navigate("/"); // Jika 401, arahkan ke halaman login
+          }
+        });
+    } else {
+      navigate("/"); // Jika token tidak ada, arahkan ke halaman login
+      return;
+    }
+  }, [navigate, token]);
 
   const fetchTransactions = () => {
     if (startDate && endDate) {
       axios
         .get(`${config.API_BASE_URL}/api/transactions_by_date`, {
+          headers: {
+            Authorization: `Bearer ${token}`, // Sertakan token di header
+          },
           params: {
             start_date: startDate.format("YYYY-MM-DD"),
             end_date: endDate.format("YYYY-MM-DD"),
           },
         })
         .then((response) => {
-          // Format transaksi yang diterima dari backend
           const formattedTransactions = response.data.transactions.map(
             (trans) => ({
               tanggal_transaksi: trans._id,

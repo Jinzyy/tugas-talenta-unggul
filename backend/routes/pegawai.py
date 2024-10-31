@@ -2,10 +2,12 @@ from flask import Blueprint, request, jsonify
 from bson import ObjectId
 from models import pegawai
 from datetime import datetime
+from routes.dashboard import token_required
 
 pegawai_bp = Blueprint('pegawai', __name__)
 
 @pegawai_bp.route('/api/pegawai', methods=['GET', 'POST'])
+@token_required
 def manage_pegawai():
     if request.method == 'GET':
         pegawai_list = list(pegawai().find({'role': 'pegawai'}))
@@ -27,6 +29,7 @@ def manage_pegawai():
         return jsonify({'success': True, 'message': 'Pegawai berhasil ditambahkan'})
 
 @pegawai_bp.route('/api/pegawai/<id>', methods=['PUT', 'DELETE'])
+@token_required
 def edit_delete_pegawai(id):
     if request.method == 'PUT':
         data = request.json

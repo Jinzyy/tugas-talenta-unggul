@@ -3,7 +3,12 @@ import { Table, Button, Form, Input, Modal, Select, message } from "antd";
 import axios from "axios";
 import LayoutUtama from "../components/Layoututama";
 import { Content } from "antd/es/layout/layout";
-import { EditFilled, DeleteFilled, SearchOutlined } from "@ant-design/icons";
+import {
+  EditFilled,
+  DeleteFilled,
+  SearchOutlined,
+  ExclamationCircleOutlined,
+} from "@ant-design/icons";
 
 import config from "../config";
 
@@ -20,13 +25,17 @@ const Employee = () => {
   });
   const [form] = Form.useForm();
 
+  const token = sessionStorage.getItem("token");
+
   useEffect(() => {
     fetchEmployees();
   }, [searchTerm, pagination.current]);
 
   const fetchEmployees = () => {
     axios
-      .get(`${config.API_BASE_URL}/api/pegawai`)
+      .get(`${config.API_BASE_URL}/api/pegawai`, {
+        headers: { Authorization: `Bearer ${token}` }, // Include token in headers
+      })
       .then((response) => {
         const filteredData = response.data.pegawai.filter((employee) =>
           employee.username.toLowerCase().includes(searchTerm.toLowerCase())
@@ -40,7 +49,9 @@ const Employee = () => {
 
   const addEmployee = (values) => {
     axios
-      .post(`${config.API_BASE_URL}/api/pegawai`, values)
+      .post(`${config.API_BASE_URL}/api/pegawai`, values, {
+        headers: { Authorization: `Bearer ${token}` }, // Include token in headers
+      })
       .then(() => {
         fetchEmployees();
         form.resetFields();
@@ -53,7 +64,13 @@ const Employee = () => {
 
   const updateEmployee = (values) => {
     axios
-      .put(`${config.API_BASE_URL}/api/pegawai/${editingEmployee._id}`, values)
+      .put(
+        `${config.API_BASE_URL}/api/pegawai/${editingEmployee._id}`,
+        values,
+        {
+          headers: { Authorization: `Bearer ${token}` }, // Include token in headers
+        }
+      )
       .then(() => {
         fetchEmployees();
         setIsModalVisible(false);
@@ -65,15 +82,27 @@ const Employee = () => {
   };
 
   const deleteEmployee = (id) => {
-    axios
-      .delete(`${config.API_BASE_URL}/api/pegawai/${id}`)
-      .then(() => {
-        fetchEmployees();
-        message.success("Employee deleted successfully");
-      })
-      .catch(() => {
-        message.error("Failed to delete employee");
-      });
+    Modal.confirm({
+      title: "Apakah Anda yakin ingin menghapus item ini?",
+      icon: <ExclamationCircleOutlined />,
+      content: "Item yang dihapus tidak dapat dikembalikan.",
+      okText: "Ya",
+      okType: "danger",
+      cancelText: "Tidak",
+      onOk: () => {
+        axios
+          .delete(`${config.API_BASE_URL}/api/pegawai/${id}`, {
+            headers: { Authorization: `Bearer ${token}` }, // Include token in headers
+          })
+          .then(() => {
+            fetchEmployees();
+            message.success("Berhasil menghapus pegawai");
+          })
+          .catch(() => {
+            message.error("Gagal menghapus pegawai");
+          });
+      },
+    });
   };
 
   const showEditModal = (employee) => {
@@ -145,16 +174,14 @@ const Employee = () => {
           <Form form={form} onFinish={addEmployee}>
             <Form.Item
               name="username"
-              rules={[
-                { required: true, message: "Please input the username!" },
-              ]}
+              rules={[{ required: true, message: "Mohon masukkan username!" }]}
             >
               <Input placeholder="Username" />
             </Form.Item>
             <Form.Item
               name="tempat_lahir"
               rules={[
-                { required: true, message: "Please input the place of birth!" },
+                { required: true, message: "Mohon masukkan tempat kelahiran!" },
               ]}
             >
               <Input placeholder="Tempat Lahir" />
@@ -162,14 +189,16 @@ const Employee = () => {
             <Form.Item
               name="tanggal_lahir"
               rules={[
-                { required: true, message: "Please input the date of birth!" },
+                { required: true, message: "Mohon masukkan tanggal lahir!" },
               ]}
             >
               <Input type="date" />
             </Form.Item>
             <Form.Item
               name="jenis_kelamin"
-              rules={[{ required: true, message: "Please select the gender!" }]}
+              rules={[
+                { required: true, message: "Mohon pilih jenis kelamin!" },
+              ]}
             >
               <Select placeholder="Jenis Kelamin">
                 <Option value="Laki-laki">Laki-laki</Option>
@@ -178,21 +207,21 @@ const Employee = () => {
             </Form.Item>
             <Form.Item
               name="alamat"
-              rules={[{ required: true, message: "Please input the address!" }]}
+              rules={[{ required: true, message: "Mohon masukkan alamat!" }]}
             >
               <Input placeholder="Alamat" />
             </Form.Item>
             <Form.Item
               name="password"
-              rules={[
-                { required: true, message: "Please input the password!" },
-              ]}
+              rules={[{ required: true, message: "Mohon masukkan password!" }]}
             >
               <Input.Password placeholder="Password" />
             </Form.Item>
             <Form.Item
               name="role"
-              rules={[{ required: true, message: "Please select the role!" }]}
+              rules={[
+                { required: true, message: "Mohon pilih otoritas akun!" },
+              ]}
             >
               <Select placeholder="Role">
                 <Option value="admin">Admin</Option>
@@ -201,7 +230,7 @@ const Employee = () => {
             </Form.Item>
             <Form.Item>
               <Button type="primary" htmlType="submit">
-                Add Employee
+                Tambah Pegawai
               </Button>
             </Form.Item>
           </Form>
@@ -234,7 +263,7 @@ const Employee = () => {
 
           {/* Modal for editing employee */}
           <Modal
-            title="Edit Employee"
+            title="Edit Pegawai"
             visible={isModalVisible}
             onCancel={handleModalCancel}
             footer={null}
@@ -243,7 +272,7 @@ const Employee = () => {
               <Form.Item
                 name="username"
                 rules={[
-                  { required: true, message: "Please input the username!" },
+                  { required: true, message: "Mohon masukkan username!" },
                 ]}
               >
                 <Input placeholder="Username" />
@@ -253,7 +282,7 @@ const Employee = () => {
                 rules={[
                   {
                     required: true,
-                    message: "Please input the place of birth!",
+                    message: "Mohon masukkan tempat kelahiran!",
                   },
                 ]}
               >
@@ -264,7 +293,7 @@ const Employee = () => {
                 rules={[
                   {
                     required: true,
-                    message: "Please input the date of birth!",
+                    message: "Mohon masukkan tanggal lahir!",
                   },
                 ]}
               >
@@ -273,7 +302,7 @@ const Employee = () => {
               <Form.Item
                 name="jenisKelamin"
                 rules={[
-                  { required: true, message: "Please select the gender!" },
+                  { required: true, message: "Mohon pilih jenis kelamin!" },
                 ]}
               >
                 <Select placeholder="Jenis Kelamin">
@@ -283,15 +312,13 @@ const Employee = () => {
               </Form.Item>
               <Form.Item
                 name="alamat"
-                rules={[
-                  { required: true, message: "Please input the address!" },
-                ]}
+                rules={[{ required: true, message: "Mohon masukkan alamat!" }]}
               >
                 <Input placeholder="Alamat" />
               </Form.Item>
               <Form.Item>
                 <Button type="primary" htmlType="submit">
-                  Update Employee
+                  Update Pegawai
                 </Button>
               </Form.Item>
             </Form>

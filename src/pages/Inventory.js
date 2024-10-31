@@ -3,11 +3,17 @@ import { Table, Button, Form, Input, Modal, message } from "antd";
 import axios from "axios";
 import LayoutUtama from "../components/Layoututama";
 import { Content } from "antd/es/layout/layout";
-import { EditFilled, DeleteFilled, SearchOutlined } from "@ant-design/icons";
+import {
+  EditFilled,
+  DeleteFilled,
+  SearchOutlined,
+  ExclamationCircleOutlined,
+} from "@ant-design/icons";
 
 import config from "../config";
 
 const Inventory = () => {
+  const { confirm } = Modal; // Import confirm dari Modal
   const [inventory, setInventory] = useState([]);
   const [filteredInventory, setFilteredInventory] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -15,13 +21,17 @@ const Inventory = () => {
   const [form] = Form.useForm();
   const [searchText, setSearchText] = useState("");
 
+  const token = sessionStorage.getItem("token");
+
   useEffect(() => {
     fetchInventory();
   }, []);
 
   const fetchInventory = () => {
     axios
-      .get(`${config.API_BASE_URL}/api/inventory`)
+      .get(`${config.API_BASE_URL}/api/inventory`, {
+        headers: { Authorization: `Bearer ${token}` }, // Include token in headers
+      })
       .then((response) => {
         setInventory(response.data.inventory_summary);
         setFilteredInventory(response.data.inventory_summary);
@@ -33,7 +43,9 @@ const Inventory = () => {
 
   const addInventory = (values) => {
     axios
-      .post(`${config.API_BASE_URL}/api/inventory`, values)
+      .post(`${config.API_BASE_URL}/api/inventory`, values, {
+        headers: { Authorization: `Bearer ${token}` }, // Include token in headers
+      })
       .then(() => {
         fetchInventory();
         form.resetFields();
@@ -46,7 +58,9 @@ const Inventory = () => {
 
   const updateInventory = (values) => {
     axios
-      .put(`${config.API_BASE_URL}/api/inventory/${editingItem._id}`, values)
+      .put(`${config.API_BASE_URL}/api/inventory/${editingItem._id}`, values, {
+        headers: { Authorization: `Bearer ${token}` }, // Include token in headers
+      })
       .then(() => {
         fetchInventory();
         setIsModalVisible(false);
@@ -57,9 +71,29 @@ const Inventory = () => {
       });
   };
 
+  // Tambahkan modal konfirmasi sebelum penghapusan
+  const showDeleteConfirm = (id) => {
+    confirm({
+      title: "Apakah Anda yakin ingin menghapus item ini?",
+      icon: <ExclamationCircleOutlined />,
+      content: "Item yang dihapus tidak dapat dikembalikan.",
+      okText: "Ya",
+      okType: "danger",
+      cancelText: "Tidak",
+      onOk() {
+        deleteInventory(id); // Panggil fungsi delete jika user konfirmasi
+      },
+      onCancel() {
+        console.log("Batal menghapus item.");
+      },
+    });
+  };
+
   const deleteInventory = (id) => {
     axios
-      .delete(`${config.API_BASE_URL}/api/inventory/${id}`)
+      .delete(`${config.API_BASE_URL}/api/inventory/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }, // Include token in headers
+      })
       .then(() => {
         fetchInventory();
         message.success("Item berhasil dihapus");
@@ -112,7 +146,7 @@ const Inventory = () => {
           <Button
             type="primary"
             danger
-            onClick={() => deleteInventory(record._id)}
+            onClick={() => showDeleteConfirm(record._id)} // Panggil showDeleteConfirm
             icon={<DeleteFilled />}
           ></Button>
         </span>
@@ -128,25 +162,33 @@ const Inventory = () => {
           <Form form={form} onFinish={addInventory}>
             <Form.Item
               name="nama_barang"
-              rules={[{ required: true, message: "Please input the name!" }]}
+              rules={[
+                { required: true, message: "Mohon masukkan nama barang!" },
+              ]}
             >
               <Input placeholder="Nama Barang" />
             </Form.Item>
             <Form.Item
               name="jenis_barang"
-              rules={[{ required: true, message: "Please input the type!" }]}
+              rules={[
+                { required: true, message: "Mohon masukkan tipe barang!" },
+              ]}
             >
               <Input placeholder="Jenis Barang" />
             </Form.Item>
             <Form.Item
               name="harga_barang"
-              rules={[{ required: true, message: "Please input the price!" }]}
+              rules={[
+                { required: true, message: "Mohon masukkan harga barang!" },
+              ]}
             >
               <Input placeholder="Harga Barang" />
             </Form.Item>
             <Form.Item
               name="stok_barang"
-              rules={[{ required: true, message: "Please input the stock!" }]}
+              rules={[
+                { required: true, message: "Mohon masukkan jumlah stok!" },
+              ]}
             >
               <Input placeholder="Stok Barang" />
             </Form.Item>
@@ -182,25 +224,33 @@ const Inventory = () => {
             <Form initialValues={editingItem} onFinish={handleModalOk}>
               <Form.Item
                 name="nama_barang"
-                rules={[{ required: true, message: "Please input the name!" }]}
+                rules={[
+                  { required: true, message: "Mohon masukkan nama barang!" },
+                ]}
               >
                 <Input placeholder="Nama Barang" />
               </Form.Item>
               <Form.Item
                 name="jenis_barang"
-                rules={[{ required: true, message: "Please input the type!" }]}
+                rules={[
+                  { required: true, message: "Mohon masukkan tipe barang!" },
+                ]}
               >
                 <Input placeholder="Jenis Barang" />
               </Form.Item>
               <Form.Item
                 name="harga_barang"
-                rules={[{ required: true, message: "Please input the price!" }]}
+                rules={[
+                  { required: true, message: "Mohon masukkan harga barang!" },
+                ]}
               >
                 <Input placeholder="Harga Barang" />
               </Form.Item>
               <Form.Item
                 name="stok_barang"
-                rules={[{ required: true, message: "Please input the stock!" }]}
+                rules={[
+                  { required: true, message: "Mohon masukkan jumlah stok!" },
+                ]}
               >
                 <Input placeholder="Stok Barang" />
               </Form.Item>

@@ -10,6 +10,10 @@ import config from "../config";
 
 const { RangePicker } = DatePicker;
 
+const token = sessionStorage.getItem("token");
+
+console.log("Token:", token);
+
 const Transactions = () => {
   const [transactions, setTransactions] = useState([]);
   const [dateRange, setDateRange] = useState([null, null]);
@@ -26,12 +30,20 @@ const Transactions = () => {
     }
 
     axios
-      .get(`${config.API_BASE_URL}/api/transactions`, { params })
+      .get(`${config.API_BASE_URL}/api/transactions`, {
+        params,
+        headers: { Authorization: `Bearer ${token}` },
+      })
       .then((response) => {
         setTransactions(response.data.transactions);
       })
-      .catch(() => {
-        message.error("Failed to fetch transactions");
+      .catch((error) => {
+        if (error.response && error.response.status === 401) {
+          message.error("Token tidak valid, silakan login ulang.");
+          // Redirect to login page if necessary
+        } else {
+          message.error("Failed to fetch transactions");
+        }
       });
   };
 
@@ -46,6 +58,7 @@ const Transactions = () => {
       .get(`${config.API_BASE_URL}/api/export_transactions?format=${format}`, {
         params,
         responseType: "blob",
+        headers: { Authorization: `Bearer ${token}` },
       })
       .then((response) => {
         const url = window.URL.createObjectURL(new Blob([response.data]));
@@ -70,7 +83,9 @@ const Transactions = () => {
     formData.append("file", file);
 
     axios
-      .post(`${config.API_BASE_URL}/api/import_transactions`, formData)
+      .post(`${config.API_BASE_URL}/api/import_transactions`, formData, {
+        headers: { Authorization: `Bearer ${token}` }, // Include token in headers
+      })
       .then((response) => {
         if (response.data.success) {
           message.success(response.data.message);
